@@ -1,0 +1,56 @@
+---
+title: "Penguinsweek6b"
+author: "Lindsay"
+date: "3/3/2022"
+output: 
+  html_document:
+    toc: TRUE 
+    toc_float: TRUE
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path= "../Output/", waring=FALSE, message=FALSE)
+```
+
+Today we are working with the penguin data to learn *RMarkdown*.
+
+# Load Libraries
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(palmerpenguins)
+library(kableExtra)
+```
+
+# Inspect the Data
+```{r, echo=FALSE}
+glimpse(penguins)
+```
+# Make a table
+
+```{r, echo=FALSE}
+penguins %>% 
+  group_by(island) %>% 
+  summarise(flippermean = mean(flipper_length_mm, na.rm = TRUE)) %>%
+  kbl() %>% #make it a kable table
+  row_spec(2, bold = T, color = "white", background = "red") %>% 
+  kable_styling(full_width = FALSE)
+```
+
+# Make a Plot
+
+```{r penguin1, warning=FALSE, fig.width=3, fig.height=4, fig.asp=1.2, fig.align="center", fig.cap="This is a plot of penguins", echo=FALSE}
+penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species))+
+  geom_boxplot()+
+  labs(x = "Bill Length (mm)",
+       y = "Bill Depth (mm)")+
+  theme_classic()
+```
+
+
+
