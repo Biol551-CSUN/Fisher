@@ -1,0 +1,69 @@
+---
+title: "Good Plot, Bad Plot"
+author: "Lindsay Fisher"
+date: "3/14/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path= "../Output/")#saves figures to the output
+```
+
+# Load Libraries
+
+```{r, warning=FALSE, message=FALSE}
+library(here)
+library(tidyverse)
+```
+
+
+# Read in Data
+
+```{r}
+starbucks <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-12-21/starbucks.csv')
+```
+
+
+# Plot 1: Bad Plot
+
+```{r badplot, echo=FALSE, warning=FALSE, message=FALSE}
+starbucks %>% #for the bad plot, will not filter through any of the data
+  ggplot()+
+  geom_point(aes(x = serv_size_m_l,
+                  y = product_name), #will leave as labels
+             color = "yellow")+ #yellow will be hard to read
+  theme(panel.background = element_rect(fill = "linen"), # bad background color for yellow points
+        axis.text.x= element_text(face="bold", #makes text bold
+                                  color = "chartreuse", #making text neon green
+                                  size=5), #makes x axis font too small
+        axis.text.y= element_text(face="bold",
+                                  color = "chartreuse",
+                                  size = 7))
+
+```
+
+# Plot 2: Good Plot
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+starbfilter<-starbucks %>% 
+ mutate(product_name= str_to_lower(product_name)) %>% #all product names lowercase
+  filter(str_detect(size, "grande"), #only keeps grande size
+         str_detect(product_name, "iced|cold|frappuccino"), #selects for cold drinks
+         milk==5, #we want only drinks with full milk
+         whip==0) #selects drinks with no whip
+```
+
+```{r goodplot, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(data=starbfilter, aes(x = caffeine_mg, y = product_name)) + #sets x and y xes
+  geom_bar(colour="black", fill="darkolivegreen4", width=.8, stat="identity")+ #makes a bar graph with dark green bars, does not change data
+  theme_classic()+ #removes dark filled grid from background
+  labs(x = "Caffeine (mg)", #makes cleaner looking labels
+       y = "Drink Name")+ 
+  ggtitle("Caffeine in grande iced Starbucks drinks")+ #creates title
+  theme(panel.background = element_rect(fill = "beige"), #colors background
+        axis.text.x= element_text(size=8), #sets x axis text size
+        axis.text.y= element_text(size = 8), #sets y axis text size
+        plot.title = element_text(face = "bold", #makes title bold
+                                   size = 12))
+```
+

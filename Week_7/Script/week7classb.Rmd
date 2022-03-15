@@ -1,0 +1,39 @@
+---
+title: "API practice"
+author: "Lindsay Fisher"
+date: "3/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggmap)
+library(tidyverse)
+library(here)
+library(ggsn)
+```
+```{r}
+ChemData<-read_csv(here("Week_7","Data","chemicaldata_maunalua.csv"))
+register_google(key = "AIzaSyCs7SsNWJuOeGTHQxaPNzc_WAGfXMn85nk", write = TRUE)
+Oahu<-get_map("Oahu")
+```
+
+```{r}
+ggmap(Oahu)
+WP<-data.frame(lon = -157.7621, lat = 21.27427)
+Map1<-get_map(WP)
+ggmap(Map1)
+Map1<-get_map(WP,zoom = 17)
+ggmap(Map1)
+Map1<-get_map(WP,zoom = 17, maptype = "satellite")
+ggmap(Map1)+
+  geom_point(data = ChemData,
+             aes(x = Long, y = Lat, color = Salinity),
+             size = 4) +
+  scale_color_viridis_c()
+
+```
+

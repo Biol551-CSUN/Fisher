@@ -1,0 +1,78 @@
+---
+title: "_Lab week 7 Map_"
+author: "Lindsay Fisher"
+date: "3/8/2022"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+    toc: TRUE
+toc-title: "Table of Contents"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path= "../Output/")
+```
+
+# Load Libraries
+
+I will be using the libraries: here, tidyverse, maps, mapdata, mapproj, and knitr.
+
+Tidy Tuesday dataset used can be found [here.] (https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-06-11)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(here)
+library(tidyverse)
+library(maps)
+library(mapdata)
+library(mapproj)
+library(knitr)
+meteorites <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv")
+
+```
+
+# Meteorite Data
+
+Below is a set of meteorite data from 2019-06-11 Tidy Tuesday on github.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+glimpse(meteorites)
+world<-map_data("world") #have to create dataset called world from map data to call on it later
+```
+
+# Plot of Meteorite impacts
+
+Below, the above data is plotted. Red points represent meteorite impacts and their geographical location. The plot only shows meteorite impacts since 1980.
+
+```{r meteormap, echo=FALSE, warning=FALSE, message=FALSE}
+metfilter<-meteorites %>% #creating new dataset
+  filter(name_type == "Valid", #only takes vald data points
+         fall == "Fell", #filters for meteorites that actually hit earth
+         year >= 1980) #filters out all years before 1980
+ggplot()+
+    geom_polygon(data = world, #taking mapdata data - putting it in a map plot
+               aes(x = long, #set x axis - actual column in dataset
+                   y = lat, #set y axis
+                   group = group, #makes the map appear with a clear outline
+                   fill = region), #makes each country/region a different color
+               color = "black")+ #outline is black
+    guides(fill = FALSE)+ 
+  theme(panel.background = element_rect(fill = "lightblue"))+ #changes map background to light blue
+  labs( x = "Longitude", #changes labels to look cleaner
+        y = "Latitude")+
+ geom_point(data = metfilter, #layering a point plot with meteor data on top of map nd mapdata
+             aes(x = lat,#sets x and y axes
+                 y = long),
+             color = "red", #makes points red - outside of aesthetics
+             size=1)+ #sets size of points
+    ggtitle("Global locations of meteorite impacts since 1980") #gives the plot a title
+
+
+  
+
+
+ 
+
+
+```
+

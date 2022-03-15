@@ -1,0 +1,72 @@
+---
+title: "Maps"
+author: "Lindsay"
+date: "3/8/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE} 
+knitr::opts_chunk$set(echo = TRUE, fig.path= "../Output/")#makes a pathway to save figures in the output folder
+```
+
+# Load Libraries
+
+```{r, echo=FALSE} 
+#echo=false makes coe not appear in r.md file
+library(here)
+library(tidyverse)
+library(maps) #all of the following will help to create maps
+library(mapdata)#the actual map data needed
+library(mapproj)
+
+```
+
+# Inspect the Data
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+popdata<-read_csv(here("Week_7","Data","CAPopdata.csv")) #reading in data for this week
+stars<-read_csv(here("Week_7","Data","stars.csv"))
+glimpse(popdata)
+glimpse(stars)
+world<-map_data("world")
+states<-map_data("states")
+counties<map_data("counties")
+```
+# World Map
+
+```{r worldmap, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot()+
+  geom_polygon(data = world, aes(x = long,
+                                 y = lat,
+                                 group = group,
+                                 fill = region),
+                                 color = "black")+
+  guides(fill = FALSE)+
+  theme_minimal()+
+  theme(panel.background = element_rect(fill = "lightblue"))+
+    coord_map(projection = "mercator",
+        xlim = c(-180,180), 
+        fill=NA, size=2)
+  
+```
+# Map of California
+
+```{r, warning=FALSE, message=FALSE}
+CA_data<-states %>% 
+  filter(region == "california")
+
+
+  ggplot()+
+  geom_polygon(data = CA_data, 
+             aes(x = lat, 
+                 y = long, 
+                 group = group), 
+             color = "black")+
+  coord_map()+
+  theme_void()
+  
+ 
+
+```
+
+
