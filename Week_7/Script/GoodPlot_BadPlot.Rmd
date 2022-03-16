@@ -2,7 +2,12 @@
 title: "Good Plot, Bad Plot"
 author: "Lindsay Fisher"
 date: "3/14/2022"
-output: html_document
+output:
+  prettydoc::html_pretty: #calling to package prettydocs
+    theme: cayman #one of the themes in pretty docs
+    highlight: github
+    toc: TRUE #makes a table of contents at the top
+toc-title: "Table of Contents" #creats a title for the table of contents
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
@@ -17,12 +22,41 @@ library(tidyverse)
 ```
 
 
-# Read in Data
+# The Starbuck Data
 
-```{r}
+**This data comes from the Tidy Tuesday Repository, for week 52 of 2021. It gives information on Starbucks drinks, regarding calories, caffeine, sodium, sugar, milk and fat for each size and type of drink. The data was taken directly from Starbucks nutritional information.**
+
+*Data can be found [here](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-12-21)*
+
+*Below, a view of the data can be seen*
+
+```{r, warning=FALSE, message=FALSE}
 starbucks <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-12-21/starbucks.csv')
+
+glimpse(starbucks)
+
+
 ```
 
+
+# Bad Plot Intro
+
+**Below, the bad plot can be seen. It was created using ggplot, with the unfiltered Starbucks dataset.**
+
+* The first thing that makes the plo bad is that I did not filter the dataset, so all sizes of each drink, and all drinks, including repeats with different amounts of mil are included.
+  + This overcrowds the plot if all products are plotted
+  + Product names were placed on the y-axis so hat they would all crown together and be overwhelming
+* Next, I intentionally used geom_point so that there would be points for every drink name. The points are small and not very easy to see when crowded together
+  + I intentionally made the points bright yellow so that they would be very hard to see and define.
+   - To do thi I included color = "yellow" within the geom_point, but not within the plot aesthetics. 
+* For the Theme, the background of the plot was changed to the color linen, so that the yellow point would be even harder to see. 
+  + The grid was left as a default, and not changed to theme_classic or something better, to be more visually un-satisfying
+  + The y axis text was made to be boded, with a very tiny size 5 so that serving sizes would be even harder to read.
+    - Additionally, the text was converted from black into the color chartreuse, a bright green, so that it would be bright, distracting and hard to read
+  + The same as above was done with the y-axis for he product names, for the smae reason
+    - The text on the y-axis was made to be bigger, so that it would obscure product names better
+* Axis labels were not changed or capitolized, and no legend was added
+* Overall, this plot is annoying to look at, and hard to read because of the colors and the crowing of the unfiltered data
 
 # Plot 1: Bad Plot
 
@@ -42,6 +76,45 @@ starbucks %>% #for the bad plot, will not filter through any of the data
 
 ```
 
+# Good Plot Intro
+
+**Below, the good plot can be seen. It was created using ggplot, with the filtered Starbucks dataset.**
+
+* The first thing that makes the good plot a good plot is filtering the Starbucks dataset.
+* I used mutate to create a new column in the dataset
+  + I used a string function to make all of the product names lowercase so that drink names would be consistent
+* Filter was used to extract the data I wanted to display on the plot, which was cold drinks only.
+  + I used a string function to detect patterns in the dataset for grande sized drinks
+  + I also used string detect to find paterns with the the specific words "iced, cold, and frappuccino" to filter out anything that was not a cold, iced beverage.
+  + I set milk exactly equal to 5.
+    - This ensured that I would mostly be getting the caffeinated coffee or cold espresso drinks instead of the refreshers without caffeine. 
+    - This also helped to filter out repeats of drinks with the same name and varying amounts of milk added.
+  + I set whip exactly equal to 0, to further filter out repeats of drink names.
+  
+* For the ggplot itself, I used the new, filtered Sarbucks dataset that I called starbfilter.
+* Under aesthetics, I set x as the amount of caffeine, in mg, in a given drink. 
+  + For the y axis, I still kept it as the product names, but this time, for the good plot, the product names were filtered through and reduced to a very specific set.
+* Using geom_bar, I made the plot into a bar graph, so that the data would be easier to read and cleaner to look at instead of a bunch of clustered points. 
+  + I made the outline of each bar black so they were clearly defined and easier to see
+  + I mde the fill color of the bars a dark green, which was less distracting, and also reflected the colors of Starbucks for the Starbucks data. 
+    - I thought that this might help the viewer better visually associate the data they were viewing.
+  + The bars were made to be a width of 0.8, which meant that they were wide enough to be seen clearly on the plot, but not wide enough that they would run together with the others
+  + For the bar graph specifically, I always use stat = "identity," so that the dataset will not be changed, and the identity will be preserved
+* Theme was changed from default to classic, to get rid of any distracting grid in the background
+* Labels of the x and y axes were changed to be capitalized, get rid of underscores to make them more readable, and include units (mg) in parentheses. 
+* I used ggtitle to give the plot a title, which would tell the reader what comparison and data the plot was showing them
+* The final aspect that I used to make the plot good was theme. 
+  + First, the background was changed to a very subtle and non-distracting beige.
+    - This created a good contrast between the background and the green of the bars.
+    - It also helped to tie in some of the color themes of Starbucks
+  + Next, x and y axis label text was changed to a size 8, which is readable, but not too big to be distracting.
+  + Plot title was changed to be bold, to capture the attention of the viewer as the first thing to read.
+    - It was also set to a size 12, which is not overwhelming to the plot, but is big enough to emphasize the title as a title and not a axis label.
+    
+* In comparison to the bad plot, the good plot is much easier to read and interpret, and is more aesthetically appealing and clean. 
+  
+  
+
 # Plot 2: Good Plot
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
@@ -54,7 +127,7 @@ starbfilter<-starbucks %>%
 ```
 
 ```{r goodplot, echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(data=starbfilter, aes(x = caffeine_mg, y = product_name)) + #sets x and y xes
+ggplot(data=starbfilter, aes(x = caffeine_mg, y = product_name)) + #sets x and y axes
   geom_bar(colour="black", fill="darkolivegreen4", width=.8, stat="identity")+ #makes a bar graph with dark green bars, does not change data
   theme_classic()+ #removes dark filled grid from background
   labs(x = "Caffeine (mg)", #makes cleaner looking labels
