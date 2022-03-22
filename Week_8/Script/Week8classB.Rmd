@@ -1,0 +1,120 @@
+---
+title: "Writing Functions"
+author: "Lindsay Fisher"
+date: "3/17/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(palmerpenguins)
+library(calecopal)
+```
+
+# Practice with Functions: F to C
+
+```{r}
+temp_F = 100
+temp_C<-(temp_F - 32)*5/9
+FtoC<-function(temp_F){ 
+temp_C<-(temp_F - 32)*5/9
+return(temp_C)
+}
+FtoC(120)#test it out
+FtoC(20)
+FtoC(35)
+FtoC(220)
+FtoC(300)
+```
+
+
+# New Function: C to K
+
+```{r}
+temp_K = 400
+temp_K<-(temp_C + 273.15)
+CtoK<-function(temp_C){ 
+temp_K<-(temp_C + 273.15)
+return(temp_K)
+}
+CtoK(400)
+CtoK(37)
+```
+
+
+# Penguins
+
+```{r}
+pal<-cal_palette("calochortus",3, type = "discrete")
+
+ggplot(penguins, aes(x = body_mass_g, y = bill_length_mm, color = island))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  scale_color_manual("Island", values=pal)+
+  theme_bw()
+```
+# Write a function for the plot
+
+```{r}
+myplot<-function(data, x, y){
+pal<-cal_palette("calochortus",3, type = "discrete")
+
+ggplot(penguins, aes(x = {{x}}, y = {{y}}, color = island))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  scale_color_manual("Island", values=pal)+
+  theme_bw()
+}
+myplot(data = penguins, x = body_mass_g, y = bill_length_mm)+
+  labs(x = "Body mass (g)",
+       y = "Flipper length (mm)",
+       title = "Body Mass of Penguins")
+```
+# Writing if else statements
+
+```{r}
+a<-4
+b<-5
+
+if (a > b) { # my question
+  f <- 20 # if it is true give me answer 1
+    } else { # else give me answer 2
+  f <- 10
+    }
+f
+
+```
+
+# Use if else for the plot
+
+```{r}
+myplot<-function(data = penguins, x, y, lines=TRUE){
+pal<-cal_palette("calochortus",3, type = "discrete")
+
+if(lines==TRUE){
+  ggplot(penguins, aes(x = {{x}}, y = {{y}}, color = island))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  scale_color_manual("Island", values=pal)+
+  theme_bw()
+}
+
+else{
+ggplot(penguins, aes(x = {{x}}, y = {{y}}, color = island))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  scale_color_manual("Island", values=pal)+
+  theme_bw()  
+}
+}
+
+myplot(data = penguins, x = body_mass_g, y = bill_length_mm, lines=FALSE)
+```
+

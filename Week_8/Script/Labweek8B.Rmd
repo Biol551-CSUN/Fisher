@@ -1,0 +1,59 @@
+---
+title: "Writing Functions lab"
+author: "Lindsay Fisher"
+date: "3/17/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path = "../Output")
+```
+
+```{r}
+library(here)
+library(tidyverse)
+library(calecopal)
+```
+
+```{r}
+CarData<-mtcars
+```
+
+
+# Writing a function to convert MPG to KPG from the mtcars dataset
+
+Below, a simple function is written, it converts miles per gallon to killometers per gallon. It is based off of the mtcars dataset.
+```{r}
+mtcars #using this dataset to create functions
+mpg_to_kpg<-function(mpg){ #creating a function of mpg
+kpg<-(mpg*1.60934)#within the function, include calculation
+return(kpg) #we want the output to be in kpg
+}
+mpg_to_kpg(21.0) #plug in a few numbers to check
+mpg_to_kpg(34.5)
+
+```
+
+
+# Write a function for a plot
+
+Writing functions for plots can make them easier to create if they need to be replicated for different data sets, or values
+
+```{r carfunction}
+myplot1<-function(data, x, y){ #next creating a function to make plots
+pal<-cal_palette("bigsur",3, type = "discrete") #including color palette in the function
+
+ggplot(CarData, aes(x = {{x}}, #curly curlies for axes within function
+                    y = {{y}}))+
+  geom_point()+#layering a point plot over a line plot
+  geom_smooth(method = "lm")+
+  scale_color_manual("Cars", values=pal)+ 
+  theme_bw()+ #simplify the theme of the bacground
+  theme(panel.background = element_rect(fill = "azure3"))#make background blue
+}
+myplot1(data = CarData, x = wt, y = mpg)+ #test that plot works with specified axes
+  labs(x = "Weight (lb/1000)",#label plot with correct labels and titles
+       y = "Miles per Gallon",
+       title = "Miles per gallon by weight of cars")
+```
+
